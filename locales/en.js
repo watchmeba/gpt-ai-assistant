@@ -124,18 +124,18 @@ const en = {
   __COMMAND_SYS_VERSION_LABEL: 'Version',
   __COMMAND_SYS_VERSION_TEXT: 'Version',
   __COMMAND_SYS_VERSION_REPLY: (version, isLatest) => `Your version is ${isLatest ? 'up-to-date' : version}.`,
-  __COMMAND_TRANSLATE_TO_EN_LABEL: '翻成英文', // TODO
-  __COMMAND_TRANSLATE_TO_EN_TEXT: '翻成英文', // TODO
-  __COMMAND_TRANSLATE_TO_EN_PROMPT: '請將以下內容翻譯成英文。', // TODO
-  __COMMAND_TRANSLATE_TO_JA_LABEL: '翻成日文', // TODO
-  __COMMAND_TRANSLATE_TO_JA_TEXT: '翻成日文', // TODO
-  __COMMAND_TRANSLATE_TO_JA_PROMPT: '請將以下內容翻譯成日文。', // TODO
-  __COMPLETION_DEFAULT_SYSTEM_PROMPT: '', // TODO
+  __COMMAND_TRANSLATE_TO_EN_LABEL: 'To English',
+  __COMMAND_TRANSLATE_TO_EN_TEXT: 'Translate to English',
+  __COMMAND_TRANSLATE_TO_EN_PROMPT: 'Please translate the following content into English.',
+  __COMMAND_TRANSLATE_TO_JA_LABEL: 'To Japanese',
+  __COMMAND_TRANSLATE_TO_JA_TEXT: 'Translate to Japanese',
+  __COMMAND_TRANSLATE_TO_JA_PROMPT: 'Please translate the following content into Japanese.',
+  __COMPLETION_DEFAULT_SYSTEM_PROMPT: 'The following conversation will be in English.',
   __COMPLETION_DEFAULT_HUMAN_PROMPT: (name) => (name ? `I am ${name}` : 'Hello'),
   __COMPLETION_DEFAULT_AI_PROMPT: (name) => (name ? `I am ${name}` : 'Hello'),
-  __COMPLETION_DEFAULT_AI_TONE: (tone) => (tone ? `以${tone}的語氣回應我：` : ''), // TODO
-  __COMPLETION_SEARCH: (a, q) => `根據「${a}」查詢結果，回答「${q}」問題`, // TODO
-  __COMPLETION_SEARCH_NOT_FOUND: '查無資料', // TODO
+  __COMPLETION_DEFAULT_AI_TONE: (tone) => (tone ? `Reply to me in a ${tone} tone: ` : ''),
+  __COMPLETION_SEARCH: (a, q) => `Based on the search result "${a}", answer the question "${q}"`,
+  __COMPLETION_SEARCH_NOT_FOUND: 'No results found',
   __COMPLETION_QUOTATION_MARK_OPENING: '"',
   __COMPLETION_QUOTATION_MARK_CLOSING: '"',
   __ERROR_ECONNABORTED: 'Timed out',
