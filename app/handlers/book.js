@@ -1,6 +1,6 @@
 import { t } from '../../locales/index.js';
 import {
-  findConflict, getDraft, parseBooking, setDraft, Booking,
+  findConflict, getDraft, getNow, parseBooking, setDraft, Booking,
 } from '../booking/index.js';
 import { COMMAND_BOT_BOOK, COMMAND_BOT_BOOK_CANCEL, COMMAND_BOT_BOOK_CONFIRM } from '../commands/index.js';
 import Context from '../context.js';
@@ -39,7 +39,7 @@ const exec = (context) => check(context) && (
       context.pushText(t('__BOOKING_MISSING')(summary, missing), [COMMAND_BOT_BOOK_CANCEL]);
       return context;
     }
-    if (draft.startsAt < new Date()) {
+    if (draft.startsAt < getNow()) {
       draft.time = '';
       setDraft(context.userId, draft);
       context.pushText(t('__BOOKING_PAST'), [COMMAND_BOT_BOOK_CANCEL]);

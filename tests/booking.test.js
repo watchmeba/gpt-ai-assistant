@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from '@jest/globals';
 import { getBookings, handleEvents, removeBookings } from '../app/index.js';
-import { parseBooking } from '../app/booking/index.js';
+import { getNow, parseBooking } from '../app/booking/index.js';
 import {
   COMMAND_BOT_BOOK, COMMAND_BOT_BOOK_CANCEL, COMMAND_BOT_BOOK_CONFIRM, COMMAND_BOT_BOOK_LIST,
 } from '../app/commands/index.js';
@@ -31,6 +31,34 @@ test('parseBooking', () => {
     restaurant: '鼎泰豐', date: '2026-10-30', time: '19:00', partySize: 4,
   });
   expect(parseBooking('7pm', now)).toMatchObject({ restaurant: '', time: '19:00' });
+});
+
+test('parseBooking in Taiwanese Mandarin', () => {
+  const now = new Date(2026, 9, 29, 12); // Thursday
+  expect(parseBooking('明天晚上七點 鼎泰豐 四位', now)).toMatchObject({
+    restaurant: '鼎泰豐', date: '2026-10-30', time: '19:00', partySize: 4,
+  });
+  expect(parseBooking('星期五 19：00 鼎泰豐 4人', now)).toMatchObject({
+    restaurant: '鼎泰豐', date: '2026-10-30', time: '19:00', partySize: 4,
+  });
+  expect(parseBooking('下週五 晚上7點半 欣葉 6位', now)).toMatchObject({
+    restaurant: '欣葉', date: '2026-11-06', time: '19:30', partySize: 6,
+  });
+  expect(parseBooking('十二月五日 晚上七點 予島 兩位', now)).toMatchObject({
+    restaurant: '予島', date: '2026-12-05', time: '19:00', partySize: 2,
+  });
+  expect(parseBooking('禮拜天 下午六點三十分 Maan 2位', now)).toMatchObject({
+    restaurant: 'Maan', date: '2026-11-01', time: '18:30', partySize: 2,
+  });
+  expect(parseBooking('一蘭 明天 晚上8點 2位', now)).toMatchObject({
+    restaurant: '一蘭', date: '2026-10-30', time: '20:00', partySize: 2,
+  });
+});
+
+test('getNow uses APP_TIMEZONE', () => {
+  // 17:30 UTC on 29 Oct is 01:30 on 30 Oct in Taipei
+  const now = getNow(new Date('2026-10-29T17:30:00Z'));
+  expect([now.getDate(), now.getHours(), now.getMinutes()]).toEqual([30, 1, 30]);
 });
 
 test('COMMAND_BOT_BOOK', async () => {

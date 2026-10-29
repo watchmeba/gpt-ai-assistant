@@ -1,3 +1,11 @@
+import { getNow } from './clock.js';
+
+const ZH_WEEKDAYS = '日天一二三四五六';
+
+const ZH_DIGITS = {
+  零: 0, 一: 1, 二: 2, 兩: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9,
+};
+
 const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 const NUMBER_WORDS = {
@@ -11,6 +19,28 @@ const pad = (n) => String(n).padStart(2, '0');
  * @returns {string}
  */
 const formatDate = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+
+/**
+ * @param {string} numeral e.g. "七", "十二", "二十五"
+ * @returns {number}
+ */
+const fromChineseNumeral = (numeral) => {
+  if (!numeral.includes('十')) return Number([...numeral].map((c) => ZH_DIGITS[c]).join(''));
+  const [tens, ones] = numeral.split('十');
+  return (tens ? ZH_DIGITS[tens] : 1) * 10 + (ones ? ZH_DIGITS[ones] : 0);
+};
+
+/**
+ * Convert full-width characters and Chinese numerals used as counts, times
+ * and dates (e.g. "四位", "七點", "十二月五日") to ASCII digits. Numerals in
+ * names, such as "一蘭", are left alone.
+ * @param {string} text
+ * @returns {string}
+ */
+const normalize = (text) => text
+  .replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+  .replace(/：/g, ':')
+  .replace(/[零一二兩三四五六七八九十]{1,3}(?=\s*(?:點|位|人|名|月|日|號|分))/g, fromChineseNumeral);
 
 const addDays = (date, days) => new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 
@@ -30,6 +60,14 @@ const parseDate = (text, now) => {
     if (date < addDays(now, 0)) date = new Date(now.getFullYear() + 1, month - 1, day);
     return { value: formatDate(date), match: m[0] };
   }
+  m = text.match(/(\d{1,2})月(\d{1,2})[日號]/);
+  if (m) {
+    const month = Number(m[1]);
+    const day = Number(m[2]);
+    let date = new Date(now.getFullYear(), month - 1, day);
+    if (date < addDays(now, 0)) date = new Date(now.getFullYear() + 1, month - 1, day);
+    return { value: formatDate(date), match: m[0] };
+  }
   const relatives = [
     [/\b(?:today|tonight)\b|今天|今晚|今日/i, 0],
     [/\btomorrow\b|明天|明晚|明日/i, 1],
@@ -39,6 +77,16 @@ const parseDate = (text, now) => {
   if (relative) {
     const [pattern, days] = relative;
     return { value: formatDate(addDays(now, days)), match: text.match(pattern)[0] };
+  }
+  m = text.match(new RegExp(`(這|本|下)?(?:個)?(?:星期|禮拜|週|周)([${ZH_WEEKDAYS}])`));
+  if (m) {
+    const target = Math.max(ZH_WEEKDAYS.indexOf(m[2]) - 1, 0);
+    if (m[1] === '下') {
+      const monday = addDays(now, -((now.getDay() + 6) % 7));
+      return { value: formatDate(addDays(monday, 7 + ((target + 6) % 7))), match: m[0] };
+    }
+    const days = (target - now.getDay() + 7) % 7;
+    return { value: formatDate(addDays(now, days)), match: m[0] };
   }
   m = text.match(new RegExp(`(?:\\b(?:on|this|next)\\s+)?\\b(${WEEKDAYS.join('|')})\\b`, 'i'));
   if (m) {
@@ -62,11 +110,12 @@ const parseTime = (text) => {
   }
   m = text.match(/(?:\bat\s+)?\b([01]?\d|2[0-3]):([0-5]\d)\b/i);
   if (m) return { value: `${pad(m[1])}:${m[2]}`, match: m[0] };
-  m = text.match(/(晚上|下午|中午|早上)?(\d{1,2})點(半)?/);
+  m = text.match(/(晚上|傍晚|下午|中午|早上|上午)?(\d{1,2})點(?:(半)|(\d{1,2})分)?/);
   if (m) {
     let hours = Number(m[2]);
-    if ((m[1] === '晚上' || m[1] === '下午') && hours < 12) hours += 12;
-    return { value: `${pad(hours)}:${m[3] ? '30' : '00'}`, match: m[0] };
+    if (['晚上', '傍晚', '下午'].includes(m[1]) && hours < 12) hours += 12;
+    const minutes = m[3] ? '30' : pad(m[4] || '00');
+    return { value: `${pad(hours)}:${minutes}`, match: m[0] };
   }
   if (/\bnoon\b/i.test(text)) return { value: '12:00', match: text.match(/(?:\bat\s+)?\bnoon\b/i)[0] };
   return null;
@@ -115,8 +164,8 @@ const parseRestaurant = (text) => {
  * @param {Date} now
  * @returns {Object}
  */
-const parseBooking = (text, now = new Date()) => {
-  let rest = ` ${text} `;
+const parseBooking = (text, now = getNow()) => {
+  let rest = ` ${normalize(text)} `;
   const take = (result) => {
     if (result) rest = rest.replace(result.match, ' ');
     return result ? result.value : undefined;

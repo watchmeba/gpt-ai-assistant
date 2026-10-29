@@ -1,4 +1,5 @@
 import Booking, { REQUIRED_FIELDS } from './booking.js';
+import { getNow } from './clock.js';
 import { formatDate, parseBooking } from './parse.js';
 
 const drafts = new Map();
@@ -32,7 +33,7 @@ const removeDraft = (userId) => {
  * @param {Date} now
  * @returns {Array<Booking>}
  */
-const getBookings = (userId, now = new Date()) => (bookings.get(userId) || [])
+const getBookings = (userId, now = getNow()) => (bookings.get(userId) || [])
   .filter((booking) => booking.startsAt >= now)
   .sort((a, b) => a.startsAt - b.startsAt);
 
@@ -85,6 +86,7 @@ export {
   findConflict,
   formatDate,
   getBookings,
+  getNow,
   getDraft,
   parseBooking,
   removeBookings,
