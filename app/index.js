@@ -1,4 +1,5 @@
 import handleEvents from './app.js';
+import { getBookings, removeBookings } from './booking/index.js';
 import { printHistories } from './history/index.js';
 import {
   getPrompt, printPrompts, removePrompt, setPrompt,
@@ -6,6 +7,8 @@ import {
 
 export {
   handleEvents,
+  getBookings,
+  removeBookings,
   printHistories,
   getPrompt,
   printPrompts,

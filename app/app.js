@@ -1,6 +1,10 @@
 import { replyMessage } from '../utils/index.js';
 import {
   activateHandler,
+  bookHandler,
+  bookCancelHandler,
+  bookConfirmHandler,
+  bookListHandler,
   commandHandler,
   continueHandler,
   deactivateHandler,
@@ -24,6 +28,10 @@ import Event from './models/event.js';
  */
 const handleContext = async (context) => (
   activateHandler(context)
+  || bookListHandler(context)
+  || bookConfirmHandler(context)
+  || bookCancelHandler(context)
+  || bookHandler(context)
   || commandHandler(context)
   || continueHandler(context)
   || deactivateHandler(context)

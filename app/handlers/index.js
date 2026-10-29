@@ -1,4 +1,8 @@
 import activateHandler from './activate.js';
+import bookHandler from './book.js';
+import bookCancelHandler from './book-cancel.js';
+import bookConfirmHandler from './book-confirm.js';
+import bookListHandler from './book-list.js';
 import commandHandler from './command.js';
 import continueHandler from './continue.js';
 import deactivateHandler from './deactivate.js';
@@ -15,6 +19,10 @@ import versionHandler from './version.js';
 
 export {
   activateHandler,
+  bookHandler,
+  bookCancelHandler,
+  bookConfirmHandler,
+  bookListHandler,
   commandHandler,
   continueHandler,
   deactivateHandler,
