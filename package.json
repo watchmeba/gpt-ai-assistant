@@ -2,6 +2,9 @@
   "name": "gpt-ai-assistant",
   "version": "4.4.4",
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "nodemon api/index.js",
     "start": "node api/index.js",

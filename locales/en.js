@@ -1,4 +1,26 @@
 const en = {
+  __BOOKING_FIELDS: {
+    restaurant: 'restaurant', date: 'date', time: 'time', partySize: 'party size',
+  },
+  __BOOKING_SUMMARY: (b) => [
+    `🍽 ${b.restaurant || '—'}`,
+    `📅 ${b.date || '—'}  🕖 ${b.time || '—'}`,
+    `👥 ${b.partySize ? `${b.partySize} guests` : '—'}${b.name ? ` · under ${b.name}` : ''}`,
+    ...(b.notes ? [`📝 ${b.notes}`] : []),
+  ].join('\n'),
+  __BOOKING_MISSING: (summary, fields) => `${summary}\n\nTo secure your table I still need the ${fields}. Just reply, e.g. "Book for 2 tomorrow at 7pm".`,
+  __BOOKING_REVIEW: (summary) => `${summary}\n\nShall I confirm this reservation?`,
+  __BOOKING_PAST: 'That time has already passed. Please choose a later date or time.',
+  __BOOKING_CONFLICT: (id, restaurant, time) => `Heads up: this is within 2 hours of booking #${id} at ${restaurant} (${time}).`,
+  __BOOKING_CONFIRMED: (id, summary, request) => `✅ Booking #${id} confirmed.\n\n${summary}\n\nHere is a request you can send to the restaurant:\n\n${request}`,
+  __BOOKING_REQUEST: (b) => `Hello, I would like to reserve a table for ${b.partySize} on ${b.date} at ${b.time}${b.name ? ` under the name ${b.name}` : ''}.${b.notes ? ` Special request: ${b.notes}.` : ''} Could you please confirm? Thank you.`,
+  __BOOKING_NO_DRAFT: 'There is no booking awaiting confirmation.',
+  __BOOKING_DRAFT_DISCARDED: 'The pending booking has been discarded.',
+  __BOOKING_CANCELLED: (id, summary) => `Booking #${id} cancelled.\n\n${summary}\n\nRemember to let the restaurant know.`,
+  __BOOKING_CANCEL_WHICH: 'Which booking should I cancel?',
+  __BOOKING_NOT_FOUND: (id) => `Booking #${id} was not found.`,
+  __BOOKING_LIST_EMPTY: 'You have no upcoming bookings.',
+  __BOOKING_LIST_TITLE: 'Your upcoming bookings:',
   __COMMAND_ANALYZE_ANALYZE_LABEL: 'Analyze',
   __COMMAND_ANALYZE_ANALYZE_TEXT: 'Analyze',
   __COMMAND_ANALYZE_ANALYZE_PROMPT: 'Please analyze the following statements.',
@@ -21,6 +43,20 @@ const en = {
   __COMMAND_BOT_ACTIVATE_TEXT: 'Activate',
   __COMMAND_BOT_ACTIVATE_ALIASES: [],
   __COMMAND_BOT_ACTIVATE_REPLY: 'Activated',
+  __COMMAND_BOT_BOOK_LABEL: 'Book',
+  __COMMAND_BOT_BOOK_TEXT: 'Book',
+  __COMMAND_BOT_BOOK_ALIASES: [],
+  __COMMAND_BOT_BOOK_CANCEL_LABEL: 'Cancel booking',
+  __COMMAND_BOT_BOOK_CANCEL_TEXT: 'Cancel booking',
+  __COMMAND_BOT_BOOK_CANCEL_ALIASES: [],
+  __COMMAND_BOT_BOOK_CONFIRM_LABEL: 'Confirm booking',
+  __COMMAND_BOT_BOOK_CONFIRM_TEXT: 'Confirm booking',
+  __COMMAND_BOT_BOOK_CONFIRM_ALIASES: [],
+  __COMMAND_BOT_BOOK_DEMO_LABEL: 'Book',
+  __COMMAND_BOT_BOOK_DEMO_TEXT: 'Book Sushi Dai for 2 tomorrow at 7pm',
+  __COMMAND_BOT_BOOK_LIST_LABEL: 'Bookings',
+  __COMMAND_BOT_BOOK_LIST_TEXT: 'Bookings',
+  __COMMAND_BOT_BOOK_LIST_ALIASES: [],
   __COMMAND_BOT_CONTINUE_LABEL: 'Continue',
   __COMMAND_BOT_CONTINUE_TEXT: 'Continue',
   __COMMAND_BOT_CONTINUE_ALIASES: [],
@@ -88,18 +124,18 @@ const en = {
   __COMMAND_SYS_VERSION_LABEL: 'Version',
   __COMMAND_SYS_VERSION_TEXT: 'Version',
   __COMMAND_SYS_VERSION_REPLY: (version, isLatest) => `Your version is ${isLatest ? 'up-to-date' : version}.`,
-  __COMMAND_TRANSLATE_TO_EN_LABEL: '翻成英文', // TODO
-  __COMMAND_TRANSLATE_TO_EN_TEXT: '翻成英文', // TODO
-  __COMMAND_TRANSLATE_TO_EN_PROMPT: '請將以下內容翻譯成英文。', // TODO
-  __COMMAND_TRANSLATE_TO_JA_LABEL: '翻成日文', // TODO
-  __COMMAND_TRANSLATE_TO_JA_TEXT: '翻成日文', // TODO
-  __COMMAND_TRANSLATE_TO_JA_PROMPT: '請將以下內容翻譯成日文。', // TODO
-  __COMPLETION_DEFAULT_SYSTEM_PROMPT: '', // TODO
+  __COMMAND_TRANSLATE_TO_EN_LABEL: 'To English',
+  __COMMAND_TRANSLATE_TO_EN_TEXT: 'Translate to English',
+  __COMMAND_TRANSLATE_TO_EN_PROMPT: 'Please translate the following content into English.',
+  __COMMAND_TRANSLATE_TO_JA_LABEL: 'To Japanese',
+  __COMMAND_TRANSLATE_TO_JA_TEXT: 'Translate to Japanese',
+  __COMMAND_TRANSLATE_TO_JA_PROMPT: 'Please translate the following content into Japanese.',
+  __COMPLETION_DEFAULT_SYSTEM_PROMPT: 'The following conversation will be in English.',
   __COMPLETION_DEFAULT_HUMAN_PROMPT: (name) => (name ? `I am ${name}` : 'Hello'),
   __COMPLETION_DEFAULT_AI_PROMPT: (name) => (name ? `I am ${name}` : 'Hello'),
-  __COMPLETION_DEFAULT_AI_TONE: (tone) => (tone ? `以${tone}的語氣回應我：` : ''), // TODO
-  __COMPLETION_SEARCH: (a, q) => `根據「${a}」查詢結果，回答「${q}」問題`, // TODO
-  __COMPLETION_SEARCH_NOT_FOUND: '查無資料', // TODO
+  __COMPLETION_DEFAULT_AI_TONE: (tone) => (tone ? `Reply to me in a ${tone} tone: ` : ''),
+  __COMPLETION_SEARCH: (a, q) => `Based on the search result "${a}", answer the question "${q}"`,
+  __COMPLETION_SEARCH_NOT_FOUND: 'No results found',
   __COMPLETION_QUOTATION_MARK_OPENING: '"',
   __COMPLETION_QUOTATION_MARK_CLOSING: '"',
   __ERROR_ECONNABORTED: 'Timed out',
